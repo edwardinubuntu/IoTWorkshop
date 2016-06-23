@@ -1,1 +1,1 @@
-include ':app', ':xivelydatastreampnggraphs', ':beacondemo'
+include ':app', ':pwrs', ':beacondemo'
