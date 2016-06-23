@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Smart plug sensing system</string>
+    <string name="large_text">
+        "Xively REST API\n\n"
+
+        "Xively is a Platform as a Service (PaaS) for the Internet of Things."
+        "Xively simplifies the interconnection of devices, data, people and places,"
+        "accelerating the creation of compelling solutions that transform how people experience their world."
+
+        "\n\n"
+
+        "The Xively API makes it quick and easy to create products that connect across the Internet of Things."
+    </string>
+    <string name="action_settings">Settings</string>
+    <string name="action_refresh">Refresh</string>
+</resources>
