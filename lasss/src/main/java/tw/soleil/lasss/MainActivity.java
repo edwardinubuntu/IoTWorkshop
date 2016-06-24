@@ -4,6 +4,8 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.LineChart;
@@ -23,9 +25,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import tw.soleil.lasss.object.DataStream;
 import tw.soleil.lasss.object.Feed;
@@ -34,13 +38,17 @@ public class MainActivity extends AppCompatActivity {
 
     private LineChart lineChart;
 
+    private ProgressBar progressbar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         lineChart = (LineChart)findViewById(R.id.line_chart);
+        lineChart.setVisibility(View.GONE);
 
+        progressbar = (ProgressBar)findViewById(R.id.progressbar);
     }
 
     @Override
@@ -52,10 +60,14 @@ public class MainActivity extends AppCompatActivity {
 
     private void loadData() {
 
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        progressbar.setVisibility(View.VISIBLE);
 
-        Calendar yesterday = Calendar.getInstance();
-        yesterday.add(Calendar.DATE, -1);
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+        Calendar yesterday = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+        yesterday.add(Calendar.HOUR, -12);
 
         String url = "https://api.xively.com/v2/feeds/" + XivelySettings.FEED_ID +".json?datastreams=Humi,Temp"
                 + "&start=" + simpleDateFormat.format(yesterday.getTime()) + "&end=" + simpleDateFormat.format(Calendar.getInstance().getTime());
@@ -68,7 +80,12 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onCompleted(Exception e, JsonObject result) {
 
+                        progressbar.setVisibility(View.GONE);
+
                         if (result != null) {
+
+                            lineChart.setVisibility(View.VISIBLE);
+
                             Gson gson = new Gson();
 
                             // Put Json Object into Feed Object
@@ -160,7 +177,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void setLineChartData(List<HashMap<String, String>> tempData, List<HashMap<String, String>> humiData) {
 
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SS'Z'");
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+
         ArrayList<String> xVals = new ArrayList<String>();
         for (int i = 0; i < tempData.size(); i++) {
 
@@ -170,7 +189,8 @@ public class MainActivity extends AppCompatActivity {
             SimpleDateFormat shortDateFormat = new SimpleDateFormat("HH:mm");
 
             try {
-                String shortText = shortDateFormat.format(simpleDateFormat.parse(dateText));
+                Date parseDateFromText = simpleDateFormat.parse(dateText);
+                String shortText = shortDateFormat.format(parseDateFromText);
                 xVals.add(shortText);
             } catch (ParseException e) {
                 e.printStackTrace();
@@ -211,7 +231,7 @@ public class MainActivity extends AppCompatActivity {
             // create a dataset and give it a type
             tempSet = new LineDataSet(yTempVals, "Temperature");
             tempSet.setColor(getResources().getColor(R.color.colorPrimary));
-            tempSet.setLineWidth(2.5f);
+            tempSet.setLineWidth(3f);
             tempSet.setCircleColor(getResources().getColor(R.color.colorPrimary));
             tempSet.setCircleRadius(0f);
             tempSet.setFillColor(getResources().getColor(R.color.colorPrimary));
@@ -222,11 +242,10 @@ public class MainActivity extends AppCompatActivity {
             tempSet.setCircleColorHole(getResources().getColor(R.color.colorPrimary));
 
             ArrayList<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
-            dataSets.add(tempSet); // add the datasets
 
             humiSet = new LineDataSet(yHumiVals, "Humidity");
             humiSet.setColor(getResources().getColor(android.R.color.holo_blue_light));
-            humiSet.setLineWidth(2.5f);
+            humiSet.setLineWidth(1f);
             humiSet.setCircleColor(getResources().getColor(android.R.color.holo_blue_light));
             humiSet.setCircleRadius(0f);
             humiSet.setFillColor(getResources().getColor(android.R.color.holo_blue_light));
@@ -235,7 +254,9 @@ public class MainActivity extends AppCompatActivity {
             humiSet.setValueTextSize(5f);
             humiSet.setValueTextColor(getResources().getColor(android.R.color.holo_blue_light));
             humiSet.setCircleColorHole(getResources().getColor(android.R.color.holo_blue_light));
+
             dataSets.add(humiSet);
+            dataSets.add(tempSet); // add the datasets
 
             // create a data object with the datasets
             LineData data = new LineData(xVals, dataSets);
