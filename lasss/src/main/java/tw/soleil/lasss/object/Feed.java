@@ -1,4 +1,4 @@
-package tw.soleil.xivelydatastreampnggraphs.object;
+package tw.soleil.lasss.object;
 
 import java.util.List;
 

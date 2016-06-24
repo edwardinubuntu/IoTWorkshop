@@ -1,15 +1,13 @@
-package tw.soleil.xivelydatastreampnggraphs;
+package tw.soleil.pwrs;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
-import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -19,10 +17,8 @@ import android.view.MenuItem;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.koushikdutta.async.future.FutureCallback;
@@ -34,8 +30,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import tw.soleil.xivelydatastreampnggraphs.object.DataStream;
-import tw.soleil.xivelydatastreampnggraphs.object.Feed;
+import tw.soleil.pwrs.object.DataStream;
+import tw.soleil.pwrs.object.Feed;
 
 public class GraphsActivity extends AppCompatActivity {
 
