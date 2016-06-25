@@ -218,11 +218,11 @@ public class MainActivity extends AppCompatActivity {
             // Temp
             tempSet = (LineDataSet)lineChart.getData().getDataSetByIndex(0);
             tempSet.setYVals(yTempVals);
-            lineChart.getData().setXVals(xVals);
 
             // Humi
             humiSet = (LineDataSet)lineChart.getData().getDataSetByIndex(1);
             humiSet.setYVals(yHumiVals);
+
             lineChart.getData().setXVals(xVals);
 
             lineChart.getData().notifyDataChanged();

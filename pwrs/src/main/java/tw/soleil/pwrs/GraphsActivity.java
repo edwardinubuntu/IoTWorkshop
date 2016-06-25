@@ -208,35 +208,39 @@ public class GraphsActivity extends AppCompatActivity {
 
                             Log.d("XivelyTestDrive", "Feed result: " + feed.toString());
 
-                            for (DataStream eachData : feed.getDatastreams()) {
-                                if (eachData.getId().equalsIgnoreCase("KW")) {
-                                    String symbol = eachData.getUnit().get("symbol");
-                                    kwTextView.setText("Current value: " + eachData.getCurrent_value() + " " +symbol);
-                                }
-                                if (eachData.getId().equalsIgnoreCase("KWH")) {
-                                    String symbol = eachData.getUnit().get("symbol");
-                                    kwhTextView.setText("Current value: " + eachData.getCurrent_value() + " " +symbol);
-                                }
-                                if (eachData.getId().equalsIgnoreCase("PA")) {
-                                    String symbol = eachData.getUnit().get("symbol");
-                                    paTextView.setText("Current value: " + eachData.getCurrent_value() + " " +symbol);
-                                }
-                                if (eachData.getId().equalsIgnoreCase("PV")) {
-                                    String symbol = eachData.getUnit().get("symbol");
-                                    pvTextView.setText("Current value: " + eachData.getCurrent_value() + " " +symbol);
-                                }
-
-                                // Check whether plug is on or not
-                                if (eachData.getId().equalsIgnoreCase("PSW")) {
-                                    if (eachData.getCurrent_value().equalsIgnoreCase("ON")) {
-                                        fab.setImageResource(R.drawable.ic_action_on);
-                                    } else if (eachData.getCurrent_value().equalsIgnoreCase("OFF")) {
-                                        fab.setImageResource(R.drawable.ic_action_off);
+                            if (feed.getDatastreams() != null) {
+                                for (DataStream eachData : feed.getDatastreams()) {
+                                    if (eachData.getId().equalsIgnoreCase("KW")) {
+                                        String symbol = eachData.getUnit().get("symbol");
+                                        kwTextView.setText("Current value: " + eachData.getCurrent_value() + " " +symbol);
                                     }
+                                    if (eachData.getId().equalsIgnoreCase("KWH")) {
+                                        String symbol = eachData.getUnit().get("symbol");
+                                        kwhTextView.setText("Current value: " + eachData.getCurrent_value() + " " +symbol);
+                                    }
+                                    if (eachData.getId().equalsIgnoreCase("PA")) {
+                                        String symbol = eachData.getUnit().get("symbol");
+                                        paTextView.setText("Current value: " + eachData.getCurrent_value() + " " +symbol);
+                                    }
+                                    if (eachData.getId().equalsIgnoreCase("PV")) {
+                                        String symbol = eachData.getUnit().get("symbol");
+                                        pvTextView.setText("Current value: " + eachData.getCurrent_value() + " " +symbol);
+                                    }
+
+                                    // Check whether plug is on or not
+                                    if (eachData.getId().equalsIgnoreCase("PSW")) {
+                                        if (eachData.getCurrent_value().equalsIgnoreCase("ON")) {
+                                            fab.setImageResource(R.drawable.ic_action_on);
+                                        } else if (eachData.getCurrent_value().equalsIgnoreCase("OFF")) {
+                                            fab.setImageResource(R.drawable.ic_action_off);
+                                        }
+                                    }
+
+
                                 }
-
-
                             }
+
+
 
 //                            Toast.makeText(GraphsActivity.this, "Updated", Toast.LENGTH_SHORT).show();
                         }
@@ -344,7 +348,7 @@ public class GraphsActivity extends AppCompatActivity {
         HashMap<String, String> value = new HashMap<String, String>();
         value.put("value", turnOnOff);
 
-        // yyyy-MM-dd'T'HH:mm:ss
+        // yyyy-MM-dd'T'HH:mm:ss'Z'
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         value.put("at", simpleDateFormat.format(new Date()));
 
