@@ -1,4 +1,4 @@
-package tw.soleil.beacondemo.service;
+package tw.soleil.indoorlocation.service;
 
 import android.annotation.TargetApi;
 import android.app.Service;
@@ -21,8 +21,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import tw.soleil.beacondemo.BeaconDemo;
-import tw.soleil.beacondemo.object.ScanRecord;
+import tw.soleil.indoorlocation.InDoorDemo;
+import tw.soleil.indoorlocation.object.IndoorObject;
+import tw.soleil.indoorlocation.object.NameMapping;
+import tw.soleil.indoorlocation.object.ScanRecord;
+import tw.soleil.indoorlocation.util.LocationCalculator;
 
 /**
  * Created by edward_chiang on 6/15/16.
@@ -44,6 +47,8 @@ public class BLEScannerService extends Service {
 
     private Intent intent;
 
+    private LocationCalculator locationCalculator = new LocationCalculator();
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -62,7 +67,7 @@ public class BLEScannerService extends Service {
                     .build();
 
         scanFilterList = new ArrayList<>();
-        scanFilterList.add(new ScanFilter.Builder().setDeviceName("HERE_Beacon").build());
+//        scanFilterList.add(new ScanFilter.Builder().setDeviceName("HERE_Beacon").build());
         scanFilterList.add(new ScanFilter.Builder().setDeviceName("estimote").build());
         // EST
         scanFilterList.add(new ScanFilter.Builder().setDeviceName("EST").build());
@@ -111,11 +116,40 @@ public class BLEScannerService extends Service {
         public void onScanResult(int callbackType, ScanResult result) {
             super.onScanResult(callbackType, result);
 
-            Log.d(BeaconDemo.TAG, "Scanned Callback Type: " + String.valueOf(callbackType));
-            Log.d(BeaconDemo.TAG, "Scanned result: " + result.toString());
+            Log.d(InDoorDemo.TAG, "Scanned Callback Type: " + String.valueOf(callbackType));
+            Log.d(InDoorDemo.TAG, "Scanned result: " + result.toString());
 
             ScanRecord scanRecordObject = ScanRecord.parseScanRecord(result.getDevice(), result.getScanRecord().getBytes());
             scanRecordObject.setRssi(result.getRssi());
+
+            /**
+             *
+             *  RSSI stands for Received Signal Strength Indicator.
+             *  It is the strength of the beacon's signal as seen on the receiving device, e.g. a smartphone.
+             *  The signal strength depends on distance and Broadcasting Power value.
+             *  At maximum Broadcasting Power (+4 dBm) the RSSI ranges from -26 (a few inches) to -100 (40-50 m distance).
+             *
+             *  https://community.estimote.com/hc/en-us/articles/201636913-What-are-Broadcasting-Power-RSSI-and-other-characteristics-of-beacon-s-signal-
+             */
+            Log.d(InDoorDemo.TAG, "Beacon info: " + scanRecordObject.toString());
+            Log.i(InDoorDemo.TAG, "Get relative distance:" + scanRecordObject.getRelativeDistance(-26) + ", beacon nickname: " + new NameMapping(scanRecordObject).getRegisteredDeviceName());
+
+            NameMapping nameMapping = new NameMapping(scanRecordObject);
+
+            IndoorObject indoorObject = new IndoorObject(nameMapping.getRegisteredDeviceName(), scanRecordObject);
+            indoorObject.setRelativeDistance(scanRecordObject.getRelativeDistance(-26));
+            indoorObject.setPosition(nameMapping.getPosition());
+
+            locationCalculator.getPositions().add(indoorObject);
+
+            if (locationCalculator.getPositions().size() >= 3) {
+                double[] position = locationCalculator.calculateCentroid();
+                Log.i(InDoorDemo.TAG, "Device position is at (" + position[0] +", " + position[1] + ") base on " + locationCalculator.getPositions().size() + " points.");
+            }
+
+//            if (locationCalculator.getPositions().size() >= 20) {
+//                locationCalculator.getPositions().clear();
+//            }
 
             boolean found = false;
             for (ScanRecord scanRecordStore  : recordedList) {
@@ -125,12 +159,9 @@ public class BLEScannerService extends Service {
             }
             if (!found && scanRecordObject.getUUID() != null && scanRecordObject.getUUID().length() > 0) {
                 scanRecordObject.setScannedDate(Calendar.getInstance().getTime());
-                Log.d(BeaconDemo.TAG, "Scanned parse Object: " + scanRecordObject);
+                Log.d(InDoorDemo.TAG, "Scanned parse Object: " + scanRecordObject);
                 recordedList.add(scanRecordObject);
 
-                // Send notification
-                BLEManager bleManager = new BLEManager();
-                bleManager.create((android.app.NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE), BLEScannerService.this, intent, scanRecordObject);
             }
         }
     };

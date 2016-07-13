@@ -1,11 +1,9 @@
-package tw.soleil.beacondemo.object;
+package tw.soleil.indoorlocation.object;
 
 import android.bluetooth.BluetoothDevice;
 import android.util.Log;
 
 import java.util.Date;
-
-import tw.soleil.beacondemo.BeaconDemo;
 
 /**
  * Created by edward_chiang on 15/5/23.
@@ -110,10 +108,6 @@ public class ScanRecord {
 
 
     public static ScanRecord parseScanRecord(BluetoothDevice device, byte[] scanRecord) {
-
-        Log.d(BeaconDemo.TAG, "Device Address: "+device.getAddress());
-        Log.d(BeaconDemo.TAG, "Device Name: " + device.getName());
-        Log.d(BeaconDemo.TAG, "Device UUIDS: " + device.getUuids());
 
         ScanRecord scanRecordObject = new ScanRecord();
 

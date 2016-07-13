@@ -1,1 +1,1 @@
-include ':app', ':pwrs', ':beacondemo', ':lasss'
+include ':app', ':pwrs', ':beacondemo', ':lasss', ':indoorlocation'
