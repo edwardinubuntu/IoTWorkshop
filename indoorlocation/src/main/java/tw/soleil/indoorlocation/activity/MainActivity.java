@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
         IndoorObject firstSpot = new IndoorObject("A", firstRecord);
         firstSpot.setPosition(new double[]{0, 0});
-        firstSpot.setRelativeDistance(5);
+        firstSpot.setRelativeDistance(3);
 
         // Add 2nd spot
         ScanRecord secondRecord = new ScanRecord();
@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
 
         IndoorObject secondSpot = new IndoorObject("B", secondRecord);
         secondSpot.setPosition(new double[]{0, 4});
-        secondSpot.setRelativeDistance(3);
+        secondSpot.setRelativeDistance(5);
 
         // Add 3rd spot
         ScanRecord thirdRecord = new ScanRecord();
@@ -75,15 +75,37 @@ public class MainActivity extends AppCompatActivity {
         thirdRecord.setMinor(3);
 
         IndoorObject thirdSpot = new IndoorObject("C", thirdRecord);
-        thirdSpot.setPosition(new double[]{4, 3});
-        thirdSpot.setRelativeDistance(0);
+        thirdSpot.setPosition(new double[]{3, 4});
+        thirdSpot.setRelativeDistance(4);
+
+        // Add 4th spot
+        ScanRecord forthRecord = new ScanRecord();
+        forthRecord.setUUID("fake");
+        forthRecord.setMajor(1);
+        forthRecord.setMinor(4);
+
+        IndoorObject fourthSpot = new IndoorObject("D", forthRecord);
+        fourthSpot.setPosition(new double[]{10, 4});
+        fourthSpot.setRelativeDistance(8);
+
+        // Add 4th spot
+        ScanRecord fifthRecord = new ScanRecord();
+        fifthRecord.setUUID("fake");
+        fifthRecord.setMajor(1);
+        fifthRecord.setMinor(5);
+
+        IndoorObject fifthSpot = new IndoorObject("E", fifthRecord);
+        fifthSpot.setPosition(new double[]{3, 0});
+        fifthSpot.setRelativeDistance(0);
 
         // Make position at 3rd spot
         locationCalculator.getPositions().add(firstSpot);
         locationCalculator.getPositions().add(secondSpot);
         locationCalculator.getPositions().add(thirdSpot);
+        locationCalculator.getPositions().add(fourthSpot);
+        locationCalculator.getPositions().add(fifthSpot);
 
         double[] userPosition = locationCalculator.calculateCentroid();
-        Log.d(InDoorDemo.TAG, "User Position expect {4, 3} and actual " + userPosition);
+        Log.d(InDoorDemo.TAG, "User Position expect {3, 0} and actual {" + userPosition[0] + ", " + userPosition[1] + "}");
     }
 }
